@@ -4,16 +4,18 @@ import fs from 'fs';
 import util from 'util';
 import chalk from 'chalk';
 import process from 'process';
+import path from 'path';
 
 const lstat = util.promisify(fs.lstat);
+const targetDir = process.argv[2] || process.cwd();
 
-fs.readdir(process.cwd(), async (err, fileNames) => {
+fs.readdir(targetDir, async (err, fileNames) => {
     if (err) {
         throw new Error(err);
     }
 
     const statPromises = fileNames.map(fileName => {
-        return lstat(fileName);
+        return lstat(path.join(targetDir, fileName));
     })
 
     const readyStats = await Promise.all(statPromises);
